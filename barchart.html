@@ -1,31 +1,11 @@
 <!DOCTYPE html>
+<html>
 <meta charset="utf-8">
+<script src="scripts\d3.v5.min.js"></script>
 <style>
-body {
-  font: 16px sans-serif;
-}
-.bar {
-  fill: steelblue;
-}
-
-.bar:hover {
-  fill: brown;
-}
-
-.axis--x path {
-  display: none;
-}
-.tooltip {
-            position: absolute;
-            font-size: 12px;
-            width:  auto;
-            height: auto;
-            pointer-events: none;
-			background: white;
-			border: 1px black;
-			color: black;
-        }
-
+    body {font: 16px sans-serif;}
+    .axis {font: 14px sans-serif;}
+    .label{font: 16px sans-serif;}
 </style>
 <body>
 <div class="jumbotron" style="background-color: gray; color: white" aligncenter>
@@ -33,7 +13,7 @@ body {
    <p style="padding-left : 2%">The bar chart of percentage of households in the United States owning one or more firemans form 2000 to 2019 </p>
    <p style="padding-left : 2%">Mostly around 37% to 47% <a href="stackedbars.html">urban land area</a> thus indicating a direct correlation between urbanization and GDP? </p>
 <svg width="1560" height="500"></svg>
-<script src="scripts\d3.v5.min.js"></script>
+
 
 <script>
 var tooltip = d3.select("body").append("div")
@@ -45,7 +25,7 @@ var tooltip = d3.select("body").append("div")
               // tooltip mouseover event handler
               var tipMouseover = function(d) {
                   //var color = colorScale(d.manufacturer);
-                  var html  = "<span style='color:red'> Year : " + d.year + "<br/>" + "Percentage of surveyed U.S. Citizen : " + d.percentage + " sq km <br/>"  + "<br /></span>"; 
+                  var html  = "<span style='color:red'> Year : " + d['year'] + "<br/>" + "Percentage of surveyed U.S. Citizen : " + d.percentage + " sq km <br/>"  + "<br /></span>"; 
                               
 
                   tooltip.html(html)
@@ -80,7 +60,7 @@ d3.csv("data/gunOwnership0019.csv", function(d) {
   if (error) throw error;
 
   x.domain(data.map(function(d) {return d.year; }));
-  y.domain([10000, d3.max(data, function(d) { return d.percentage; })]);
+  y.domain([0, d3.max(data, function(d) { return d.percentage; })]);
 
   g.append("g")
       .attr("class", "axis axis--x")
@@ -118,3 +98,4 @@ d3.csv("data/gunOwnership0019.csv", function(d) {
 </script>
 <h3>Begin the <a href="index.html">Journey</a> again?</h3><br/>
 </body>
+</html>
