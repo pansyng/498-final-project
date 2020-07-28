@@ -63,7 +63,7 @@ var tooltip = d3.select("body").append("div")
                       .style("opacity", 0); // don't care about position!
               };
 var svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 100, left: 400},
+    margin = {top: 20, right: 20, bottom: 100, left: 40},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom;
 
@@ -76,9 +76,10 @@ var g = svg.append("g")
 d3.csv("data/gunOwnership0019.csv", function(d) {
   d.Percentage = +d.Percentage;
   return d;
-}, function(data) {
+}, function(error, data) {
+  if (error) throw error;
 
-  x.domain(d3.extent(data, function(d){return d.Year;}));
+  x.domain(data.map(function(d) {return d.Year; }));
   y.domain([10000, d3.max(data, function(d) { return d.Percentage; })]);
 
   g.append("g")
