@@ -1,54 +1,179 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-
+<html>
 <head>
-<title>
-  CS 498 Data Visualization
-</title>
-</head>
+<title>NYC 311 Calls by Responsible Agency</title>
+
 <style>
-body{
-font: 16px sans-serif;
+body {
+  margin: 15px;
+  background-color: #F1F3F3    
 }
 
-.axis path,
-.axis line{
-  fill:none;
-  stroke: #000;
-  shape-rendering: crispEdges;
+.chart rect {
+  fill: #00306c;
 }
 
-.dot{
-  stroke: #000;
+.chart text {
+  fill: #FCD727;
+  font: 9px sans-serif;
+  font-weight: bold
 }
-.tooltip{ 
+
+.toolTip {
   position: absolute;
-  width: auto;
+  text-align: left;
+  color: #00306c;
+  min-width: auto;
   height: auto;
-  pointer-events: none;
+  padding: 7px;
+  font: 12px sans-serif;		
+  display: none;
+  background: #FCD727;
+  border: 0px;
+  border-radius: 8px;			
+  pointer-events: none;	
 }
-</style> 
+</style>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script>
+
+// Data source:
+// http://tech.mit.edu/V132/N59/pressure/breakdown/residence/index.htm
+d3.json("Agency_ungrouped.json", function(error, data) {
+	if (error) throw error;
+
+    data.forEach(function(d) {
+        d.Agency = d.Agency;
+        d.Count = d.Count;
+    });
+
+var width = window.innerWidth,
+	barHeight = 20,
+	margin = { top: 40, right: 20, bottom: 20, left: 40 };
+
+var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+var scaleFunctionx = d3.scale.linear().domain([0, 20000]).range([0, width]);
+
+// the main function that uses d3 to both create and update the bar chart
+function updateBarChart() {
+  var chart = d3.select("#d3chart"); // select the chart itself
+
+  var binding = chart.selectAll("g")
+                     .data(data, function(d) {
+                       return d.Agency;
+                     });
+
+  var enterG = binding.enter()
+                      .append("g")
+					  
+
+  enterG.append("rect")
+     .attr("width", function(d) {
+       return scaleFunctionx(d.Count);
+     })
+     .attr("height", barHeight-1)
+	  .on("mousemove", function(d){
+            tooltip
+              .style("left", d3.event.pageX  + "px")
+              .style("top", d3.event.pageY  + "px")
+              .style("display", "inline-block")
+              .html("<b>Agency:</b>"+ (d.Agency) + "<br>" + "<b> Complaints Count:	</b>" +(d.Count));})
+	.on("mouseout", function(d){ tooltip.style("display", "none");});
+
+
+  enterG.append("text")
+     .attr("x", 3)
+     .attr("y", barHeight / 2 + 3)
+     .text(function(d) {return d.Agency + " (" + d.Count + ")";});
+	
+  binding.transition()
+		.delay(function(d, i) {
+				return i * 40;
+		})
+         .duration(1500)
+         .attr("transform", function(d, i) {
+           return "translate(0," + i * barHeight + ")";
+         });
+}
+
+// sort Agency by Count and update the chart
+function sortAndUpdate(isAscending) {
+  data.sort(function(a, b) {
+    if (isAscending) {
+      return d3.ascending(a.Count, b.Count);
+    }
+    else {
+      return d3.descending(a.Count, b.Count);
+    }
+  });
+
+  // update the EXISTING bar chart with the newly-sorted Agency
+  updateBarChart();
+}
+
+// run this code after your page loads
+$(function() {
+  // set the initial dimensions for the SVG container
+  // (very important or else the entire chart won't display)
+  d3.select("#d3chart")
+    .attr("width", width)
+    .attr("height", barHeight* data.length);
+
+  // create the bar chart for the first time
+  updateBarChart();
+
+  // set button click handlers
+  $("#sortAscButton").click(function() {sortAndUpdate(true);});
+  $("#sortDescButton").click(function() {sortAndUpdate(false);});
+});
+});
+</script>
+</head>
+
 <body>
-  <div class="jumbotron" style="background-color: gray; color: white" aligncenter>
-    <h1 style="padding-left : 2%">Poverty and Diabetes</h1>
-    <h2><p style="padding-left : 2%">Does poverty leads to type II diabetes?</p>
-  </h2>
-  </div>
-  <div class="article-header" aligncenter>
-  <div class="article">
-  <br/><h3>Objective</h3><br/>
-  <p style="padding-left : 2%">This project aims to look at land usage patterns across the world and the impact thereby, on the GDP. We examine if there is any correlation between certain types of land usage and the GDP.</p>
-  <br/><h3>Design</h3><br/>
-  <p style="padding-left : 2%">Using the concepts learned in the CS-498 Data Visualization class at University of Illinois Urbana Champaign, I am analysing the impact of different types of land use and population on the GDP of various countries.</p>
-<p style="padding-left : 2%">This narrative visualization follows the structure of an <b>interactive slideshow</b> allowing the user to traverse the slides and look at different factors and their impact or non-impact on GDP.</p>
-  <br/><h3>Data</h3><br/>
-  <p style="padding-left : 2%">The dataset used was derived from the World Development Indicators dataset from World Bank. This dataset originally is available as an Excel file from <a href="http://data.worldbank.org/data-catalog/world-development-indicators">World Bank</a> and is free to use.  </p>
-<p style="padding-left : 2%">The original dataset contained over 1500 development indicators measured across 264 countries over a period of 56 years from 1960 to 2016. </p>
-<p style="padding-left : 2%">However, for the purpose of this project, I considered only a subset of indicators related specifically to land usage and for a shorter time period: a decade from 2005 through 2015. </p>
- </div>
- <div class="article-header" aligncenter>
- <br/><h3>Begin the <a href="journey.html">Journey</a></h3><br/></div>
+
+<h1 style="color:#00306c;font: 25px Helvetica Neue">NYC 311 Calls by Responsible Agency</h1>
+
+<div style="margin-bottom: 10px;">
+  <button id="sortAscButton" style="font: 14px Helvetica Neue;
+  background-color: #222;
+  background-image: -moz-linear-gradient(top, rgba(255,255,255,.25), rgba(255,255,255,.11));
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, rgba(255,255,255,.25)),color-stop(1, rgba(255,255,255,.11)));
+  background-image: -webkit-linear-gradient(rgba(255,255,255,.25), rgba(255,255,255,.11));
+  color: #fff;
+  text-rendering: optimizeLegibility;
+  text-shadow: 0 -1px 1px #222;
+  padding: 6px 10px 6px 10px;
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid #222;
+  margin: 0;
+  -moz-box-shadow: 0 1px 3px #999;
+  -webkit-box-shadow: 0 1px 3px #999;">Sort Ascending</button>
+  
+  <button id="sortDescButton" style="font: 14px Helvetica Neue;
+  background-color: #222;
+  background-image: -moz-linear-gradient(top, rgba(255,255,255,.25), rgba(255,255,255,.11));
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, rgba(255,255,255,.25)),color-stop(1, rgba(255,255,255,.11)));
+  background-image: -webkit-linear-gradient(rgba(255,255,255,.25), rgba(255,255,255,.11));
+  color: #fff;
+  text-rendering: optimizeLegibility;
+  text-shadow: 0 -1px 1px #222;
+  padding: 6px 10px 6px 10px;
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid #222;
+  margin: 0;
+  -moz-box-shadow: 0 1px 3px #999;
+  -webkit-box-shadow: 0 1px 3px #999;">Sort Descending</button>
 </div>
+
+<div>
+  <svg class="chart" id="d3chart"></svg>
+</div>
+
 </body>
-
-
+</html>
