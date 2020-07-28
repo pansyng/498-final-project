@@ -45,7 +45,7 @@ var tooltip = d3.select("body").append("div")
               // tooltip mouseover event handler
               var tipMouseover = function(d) {
                   //var color = colorScale(d.manufacturer);
-                  var html  = "<span style='color:red'> Year : " + d['CountryName'] + "<br/>" + "Percentage of surveyed U.S. Citizen : " + d.Percentage + " sq km <br/>"  + "<br /></span>"; 
+                  var html  = "<span style='color:red'> Year : " + d.year + "<br/>" + "Percentage of surveyed U.S. Citizen : " + d.percentage + " sq km <br/>"  + "<br /></span>"; 
                               
 
                   tooltip.html(html)
@@ -74,13 +74,13 @@ var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.csv("data/gunOwnership0019.csv", function(d) {
-  d.Percentage = +d.Percentage;
+  d.percentage = +d.percentage;
   return d;
 }, function(error, data) {
   if (error) throw error;
 
-  x.domain(data.map(function(d) {return d.Year; }));
-  y.domain([10000, d3.max(data, function(d) { return d.Percentage; })]);
+  x.domain(data.map(function(d) {return d.year; }));
+  y.domain([10000, d3.max(data, function(d) { return d.percentage; })]);
 
   g.append("g")
       .attr("class", "axis axis--x")
@@ -107,10 +107,10 @@ d3.csv("data/gunOwnership0019.csv", function(d) {
     .data(data)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.Year); })
-      .attr("y", function(d) { return y(d.Percentage); })
+      .attr("x", function(d) { return x(d.year); })
+      .attr("y", function(d) { return y(d.percentage); })
       .attr("width", x.bandwidth())
-      .attr("height", function(d) { return height - y(d.Percentage); })
+      .attr("height", function(d) { return height - y(d.percentage); })
 	  .on("mouseover", tipMouseover)
       .on("mouseout", tipMouseout);
 });
