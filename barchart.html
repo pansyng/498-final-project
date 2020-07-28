@@ -76,8 +76,7 @@ var g = svg.append("g")
 d3.csv("data/gunOwnership0019.csv", function(d) {
   d.Percentage = +d.Percentage;
   return d;
-}, function(error, data) {
-  if (error) throw error;
+}, function(data) {
 
   x.domain(data.map(function(d) { return d.Year; }));
   y.domain([10000, d3.max(data, function(d) { return d.Percentage; })]);
