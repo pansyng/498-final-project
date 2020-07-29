@@ -56,7 +56,7 @@ var line = d3.line()
     .x(function(d) { return x(d.year); })
     .y(function(d) { return y(d.forestcover); });
 
-d3.csv("data/percentage.csv", type, function(error, data) {
+d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/percentage.csv", function(error, data) {
   if (error) throw error;
 
   var countries = data.columns.slice(1).map(function(id) {
