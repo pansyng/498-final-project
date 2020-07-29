@@ -45,7 +45,8 @@ var svg = d3.select("svg"),
     height = svg.attr("height") - margin.top - margin.bottom,
     g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var parseTime = d3.timeParse("%Y");
+var parseTime = d3.timeParse("%Y%m%d");
+
 
 var x = d3.scaleTime().range([0, width]),
     y = d3.scaleLinear().range([height, 0]),
@@ -53,7 +54,7 @@ var x = d3.scaleTime().range([0, width]),
 
 var line = d3.line()
     .curve(d3.curveBasis)
-    .x(function(d) { return x(d.year); })
+    .x(function(d) { return x(d.date); })
     .y(function(d) { return y(d.forestcover); });
 
 d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/percentage.csv").then(function(data) {
@@ -63,12 +64,12 @@ d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/
     return {
       id: id,
       values: data.map(function(d) {
-        return {date: d.year, forestcover: d[id]};
+        return {date: d.date, forestcover: d[id]};
       })
     };
   });
 
-  x.domain(d3.extent(data, function(d) { return d.year; }));  
+  x.domain(d3.extent(data, function(d) { return d.date; }));  
 
   y.domain([
     d3.min(countries, function(c) { return d3.min(c.values, function(d) { return d.forestcover; }); }),
@@ -90,7 +91,7 @@ d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/
       .attr("y", 6)
       .attr("dy", "0.71em")
       .attr("fill", "#000")
-      .text("forestcover, %");
+      .text("people who own gun, %");
 
   var country = g.selectAll(".country")
     .data(countries)
@@ -104,7 +105,7 @@ d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/
 
   country.append("text")
       .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; })
-      .attr("transform", function(d) { return "translate(" + x(d.value.year) + "," + y(d.value.forestcover) + ")"; })
+      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.forestcover) + ")"; })
       .attr("x", 3)
       .attr("dy", "0.35em")
       .style("font", "10px sans-serif")
@@ -112,7 +113,7 @@ d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/
 });
 
 function type(d, _, columns) {
-  d.year = parseTime(d.year);
+  d.year = parseTime(d.date);
   for (var i = 1, n = columns.length, c; i < n; ++i) d[c = columns[i]] = +d[c];
   return d;
 }
