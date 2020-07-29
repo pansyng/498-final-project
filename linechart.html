@@ -1,122 +1,133 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<style>
-body {
-  font: 16px sans-serif;
-}
-.tooltip {
-            position: absolute;
-            font-size: 12px;
-            width:  auto;
-            height: auto;
-            pointer-events: none;
-			background: white;
-			border: 1px black;
-			color: black;
-        }
-.axis--x path {
-  display: none;
-}
-
+<head>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <style>
+      body {font-family: calibri;} 
+  .axis {font: 14px calibri;}
+  .label {font: 16px calibri;}
+    
 .line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2;
 }
-
-</style>
-<body>
-<div class="jumbotron" style="background-color: gray; color: white" aligncenter>
-    <h1 style="padding-left : 2%">Does more forest cover mean more GDP?</h1></div>
-   <p style="padding-left : 2%">The line chart of average percentage of forest cover for top 25 countries in terms of average GDP for the past 10 years across various countries depicts the years 1990 through 2015 on the x-axis versus the average percentage of forest cover on the y-axis. </p>
-   <p style="padding-left : 2%">Developed nations seem to be holding steady while developing countries seem to have depleting forest cover and very few nations like Belgium are making a concerted effort to improve their forest cover.</p>
-  <p style="padding-left : 2%">Perhaps in terms of environmental concern, developing nations need to exercise caution but there does not seem to be a direct correlation between forest cover and GDP. So was Trump right to exit the Paris accord after all?</p>
-  <p style="padding-left : 2%"><a href="end.html">Is that it then?</a></p>
   
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+    
+    /* Style the dots by assigning a fill and stroke */
+.dot {
+    fill: steelblue;
+    stroke: #fff;
+}
+    
+  </style>
+</head>
 
+<body>
+  <div id="chart"></div>
 
-<svg width="960" height="1000"></svg>
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<script>
+  <script>
+//code below based on https://bl.ocks.org/caravinden/raw/eb0e5a2b38c8815919290fa838c6b63b/
+    
+// Line help
+// https://bl.ocks.org/gordlea/27370d1eea8464b04538e6d8ced39e89
+// https://bl.ocks.org/d3noob/402dd382a51a4f6eea487f9a35566de0    
+    
+// set the dimensions and margins of the graph
+var margin = {top: 30, right: 20, bottom: 45, left: 80},
+    width = 800 - margin.left - margin.right,
+    height = 450 - margin.top - margin.bottom;
 
-var svg = d3.select("svg"),
-    margin = {top: 20, right: 80, bottom: 30, left: 50},
-    width = svg.attr("width") - margin.left - margin.right,
-    height = svg.attr("height") - margin.top - margin.bottom,
-    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+// set the ranges
+var x = d3.scaleTime().range([0, width]);
+var y = d3.scaleLinear().range([height, 0]);
+ 
+// append the svg object to the body of the page
+// append a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")")
+;
 
-var parseTime = d3.timeParse("%Y");
+// define the line
+var valueline = d3.line()
+    .x(function(d) { return x(d.key); })
+    .y(function(d) { return y(d.value); });
+      d3.csv("https://gist.githubusercontent.com/weiglemc/ae4df6c0fac03fb2776ae2bf3129a26a/raw/f9387c87a64d60b83b119d7aaec7311c17ae57bf/hw4-established.csv").then(function(data) {
 
-var x = d3.scaleTime().range([0, width]),
-    y = d3.scaleLinear().range([height, 0]),
-    z = d3.scaleOrdinal(d3.schemeCategory10);
+    // nest, rollup help from
+    // http://learnjsdata.com/group_data.html
+    // and http://bl.ocks.org/phoebebright/raw/3176159/
 
-var line = d3.line()
-    .curve(d3.curveBasis)
-    .x(function(d) { return x(d.year); })
-    .y(function(d) { return y(d.forestcover); });
-
-d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/percentage.csv", function(error, data) {
-  if (error) throw error;
-
-  var countries = data.columns.slice(1).map(function(id) {
-    return {
-      id: id,
-      values: data.map(function(d) {
-        return {date: d.year, forestcover: d[id]};
-      })
-    };
-  });
-
-  x.domain(d3.extent(data, function(d) { return d.year; }));  
-
-  y.domain([
-    d3.min(countries, function(c) { return d3.min(c.values, function(d) { return d.forestcover; }); }),
-    d3.max(countries, function(c) { return d3.max(c.values, function(d) { return d.forestcover; }); })
-  ]);
-
-  z.domain(countries.map(function(c) { return c.id; }));
-
-  g.append("g")
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
-
-  g.append("g")
-      .attr("class", "axis axis--y")
-      .call(d3.axisLeft(y))
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", "0.71em")
-      .attr("fill", "#000")
-      .text("forestcover, %");
-
-  var country = g.selectAll(".country")
-    .data(countries)
-    .enter().append("g")
-      .attr("class", "country");
-
-  country.append("path")
-      .attr("class", "line")
-      .attr("d", function(d) { return line(d.values); })
-      .style("stroke", function(d) { return z(d.id); });
-
-  country.append("text")
-      .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; })
-      .attr("transform", function(d) { return "translate(" + x(d.value.year) + "," + y(d.value.forestcover) + ")"; })
-      .attr("x", 3)
-      .attr("dy", "0.35em")
-      .style("font", "10px sans-serif")
-      .text(function(d) { return d.id; });
+// aggregate by decade (10 years)
+var count = d3.nest().key(d => parseInt(d.established/10))
+  .sortKeys(d3.ascending)
+  .rollup(v => v.length)
+  .entries(data);
+//    console.log("count");
+//    console.log(JSON.stringify(count));
+    
+//    https://stackoverflow.com/questions/48698670/formatting-year-in-d3-v4-to-remove-commas
+    //https://stackoverflow.com/questions/16549868/d3-remove-comma-delimiters-for-thousands
+ 
+  var parseTime = d3.timeParse("%Y");
+  count.forEach(function(d) {
+  d.key = parseTime(d.key*10); // put back as year
+  d.value = +d.value;
 });
 
-function type(d, _, columns) {
-  d.year = parseTime(d.year);
-  for (var i = 1, n = columns.length, c; i < n; ++i) d[c = columns[i]] = +d[c];
-  return d;
-}
+  // Scale the range of the data in the domains
+  x.domain(d3.extent(count, d=>d.key));
+  y.domain([0, d3.max(count, d=>d.value)]);
+  
+  // Add the valueline path.
+  svg.append("path")
+ .data([count])
+      .attr("class", "line")
+      .attr("d", valueline);
 
-</script>
-<h3>Begin the <a href="index.html">Journey</a> again</h3><br/>
+  // Add dots
+  svg.selectAll(".dot")
+      .data(count)
+  .enter().append("circle") // Uses the enter().append() method
+    .attr("class", "dot") // Assign a class for styling
+    .attr("cx", function(d) { return x(d.key);})
+    .attr("cy", function(d) { return y(d.value);})
+    .attr("r", 4);
+  
+  // add the x Axis
+  svg.append("g")
+      .attr("class", "axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+        
+    svg.append("text")
+		// set label position to x = width/2 and y=height+margin.bottom
+      .attr("transform", "translate(" + width/2 + "," + (height+margin.bottom-5) + ")")
+    .style("text-anchor", "middle")  // center text
+  	.text("Year Established")
+  ;
+
+  // add the y Axis
+  svg.append("g")
+      .attr("class", "axis")
+      .call(d3.axisLeft(y));       
+        
+   svg.append("text")
+      .attr("transform", "translate(" + -1*margin.left + "," 
+            + -1*margin.top/2 + ")")
+    .style("text-anchor", "start")  
+  	.text("Universities established per decade")
+  ;
+  });
+
+  </script>
 </body>
