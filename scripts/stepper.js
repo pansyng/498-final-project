@@ -1,3 +1,4 @@
+
 function switchStep(newStep)
 {
   d3.selectAll(".step-link").classed("active", false);
