@@ -1,58 +1,111 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <title>CS 498 Data Visualization Final Project</title>
+  <meta name="author" content="Pui Sze Pansy Ng">
+  <meta name="description" content="">
 
-<!-- Load d3.js -->
-<script src="https://d3js.org/d3.v5.js"></script>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/stepper.css">
 
-<!-- Create a div where the graph will take place -->
-<div id="my_dataviz"></div>
-<style>
-    .axis path,
-    .axis line {
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-    }
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script src="scripts/d3.v5.min.js"></script>
+  <script src="scripts/stepper.js"></script>
+</head>
+<body>
+  <div id="container">
+    <h1>Dynamic Annotations in a Visualization Stepper</h1>
+    <h2 class="subtitle">Example of using jQuery to switch between annotations for different steps of a visualization</h2>
+    <div id="vis-nav">
+      <a href="#" id="step1" class="step-link active">Step1</a>
+      <a href="#" id="step2" class="step-link">Step2</a>
+      <a href="#" id="step3" class="step-link">Step3</a>
+    </div>
+    <div id="vis-container">
+      <div id="annotation-steps">
+        <div class="annotation-step" id="step1-annotation" style="display:block;">
+          <div class="annotation" id="step1-left-annotation" >
+            <h4>Left Annotation Title</h4>
+            <p>Here is the annotation text for the <strong>left</strong> annotation of step 1</p>
+          </div>
+          <div class="annotation" id="step1-right-annotation" >
+            <h4>Right Annotation Title</h4>
+            <p>Here is the annotation text for the <strong>right</strong> annotation of step 1</p>
+          </div>
+        </div>
+        <div class="annotation-step" id="step2-annotation">
+          <div class="annotation" id="step2-center-annotation" >
+            <h4>Center Annotation Title</h4>
+            <p>Here is the annotation text for the center annotation of step 2.<br/> 
+              We are using absolute positioning of these divs</p>
+          </div>
+        </div>
+        <div class="annotation-step" id="step3-annotation">
+          <div class="annotation" id="step3-high-annotation" >
+            <h4>High Annotation Title</h4>
+            <p>This is text up high.</p>
+          </div>
+          <div class="annotation" id="step3-low-annotation" >
+            <h4>Low Annotation Title</h4>
+            <p>This is text down low.</p>
+          </div>
+        </div>
+      </div>
+      <div id="vis-canvas">
+      <style>
+        .axis path,
+        .axis line {
+          fill: none;
+          stroke: #000;
+          shape-rendering: crispEdges;
+        }
 
-    .dot{
-      stroke: #000;
-    }
-  </style>
-  <script>
-    var margin = {top: 50, right: 20, bottom: 30, left:80},
-    width = 940 - margin.left - margin.right, 
-    height = 500 - margin.top - margin.bottom;
+        .dot{
+          stroke: #000;
+        }
+      </style>
+      <script>
+        var margin = {top: 50, right: 20, bottom: 30, left:80},
+        width = 940 - margin.left - margin.right, 
+        height = 500 - margin.top - margin.bottom;
 
-    var svg = d3.select("#my_dataviz")
-      .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    
-    d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/palmerpenguins.csv").then(function(data){
-      var x = d3.scaleLinear()
-        .range([0, width]);
-      svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
+        var svg = d3.select("#my_dataviz")
+          .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        
+        d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/palmerpenguins.csv").then(function(data){
+          var x = d3.scaleLinear()
+            .domain([170, 230])
+            .range([0, width]);
+          svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
 
-      var y = d3.scaleLinear()
-        .range([height, 0]);
-      svg.append("g")
-        .call(d3.axisLeft(y));
-      var color = d3.scaleOrdinal()
-        .domain(["setosa", "versicolor", "virginica"])
-        .range(["#440154ff", "#21908dff", "#fde725ff"]);
-      
-      svg.append("g")
-        .selectAll("dot")
-        .data(data)
-        .enter()
-        .append("circle")
-          .attr("cx", function(d){return x(d.flipper_length_mm);})
-          .attr("cy", function(d){return y(d.body_mass_g);})
-          .attr("r", 5)
-          .style("fill", function(d){return color(d.species);});
-    });
-  </script>
+          var y = d3.scaleLinear()
+            .domain([3500, 6500])
+            .range([height, 0]);
+          svg.append("g")
+            .call(d3.axisLeft(y));
+          var color = d3.scaleOrdinal()
+            .domain(["setosa", "versicolor", "virginica"])
+            .range(["#440154ff", "#21908dff", "#fde725ff"]);
+          
+          svg.append("g")
+            .selectAll("dot")
+            .data(data)
+            .enter()
+            .append("circle")
+              .attr("cx", function(d){return x(d.flipper_length_mm);})
+              .attr("cy", function(d){return y(d.body_mass_g);})
+              .attr("r", 5)
+              .style("fill", function(d){return color(d.species);});
+        });
+      </script>
+      </div>
+    </div>
+  </div>
+  
+</body>
