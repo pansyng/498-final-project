@@ -65,26 +65,19 @@
               .attr("r", 5)
               .style("fill", function(d) { return color(d.species); })
             .on("mouseover", function(d){
-              selected_specie = d.species;
-              
-              d3.selectAll(".dot")
+              d3.selecAll(".dot")
+                .filter(function(dot){
+                    return (dot.species != dot.species)
+                })
                 .transition()
-                .duration(200)
-                .style("fill", "lightgrey")
-                .attr("r", 3);
-                
-              d3.selectAll("." + selected_specie)
-                .transition()
-                .duration(200)
-                .style("fill", color(selected_specie))
-                .attr("r", 7);
+                .style("opacity", 0.01)
           })
             .on("mouseleave", function(d){
               d3.selectAll(".dot")
+                .filter(function(dot){
+                    return (dot.species != dot.species)
+                })
                 .transition()
-                .duration(200)
-                .style("fill", "lightgrey")
-                .attr("r", 5)
-          })
-        });
+                .style("opacity", 1)
+          });
       </script>
