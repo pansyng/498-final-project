@@ -1,104 +1,58 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v5.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
 <style>
-body {
-  font: 16px sans-serif;
-}
-.tooltip {
-            position: absolute;
-            font-size: 12px;
-            width:  auto;
-            height: auto;
-            pointer-events: none;
-			background: white;
-			border: 1px black;
-			color: black;
-        }
-.axis--x path {
-  display: none;
-}
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
 
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}
+    .dot{
+      stroke: #000;
+    }
+  </style>
+  <script>
+    var margin = {top: 50, right: 20, bottom: 30, left:80},
+    width = 940 - margin.left - margin.right, 
+    height = 500 - margin.top - margin.bottom;
 
-</style>
-<body>
-<div class="jumbotron" style="background-color: gray; color: white" aligncenter>
-    <h1 style="padding-left : 2%">Does more forest cover mean more GDP?</h1></div>
-   <p style="padding-left : 2%">The line chart of average percentage of forest cover for top 25 countries in terms of average GDP for the past 10 years across various countries depicts the years 1990 through 2015 on the x-axis versus the average percentage of forest cover on the y-axis. </p>
-   <p style="padding-left : 2%">Developed nations seem to be holding steady while developing countries seem to have depleting forest cover and very few nations like Belgium are making a concerted effort to improve their forest cover.</p>
-  <p style="padding-left : 2%">Perhaps in terms of environmental concern, developing nations need to exercise caution but there does not seem to be a direct correlation between forest cover and GDP. So was Trump right to exit the Paris accord after all?</p>
-  <p style="padding-left : 2%"><a href="end.html">Is that it then?</a></p>
-  
+    var svg = d3.select("#my_dataviz")
+      .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    
+    d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/palmerpenguins.csv").then(function(data){
+      var x = d3.scaleLinear()
+        .range([0, width]);
+      svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
 
-
-<svg width="960" height="1000"></svg>
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<script>
-
-// set the dimensions and margins of the graph
-var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-
-// append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
-
-//Read the data
-d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/5_OneCatSevNumOrdered.csv", function(data) {
-
-  // group the data: I want to draw one line per group
-  var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
-    .key(function(d) { return d.name;})
-    .entries(data);
-
-  // Add X axis --> it is a date format
-  var x = d3.scaleLinear()
-    .domain(d3.extent(data, function(d) { return d.year; }))
-    .range([ 0, width ]);
-  svg.append("g")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x).ticks(5));
-
-  // Add Y axis
-  var y = d3.scaleLinear()
-    .domain([0, d3.max(data, function(d) { return +d.n; })])
-    .range([ height, 0 ]);
-  svg.append("g")
-    .call(d3.axisLeft(y));
-
-  // color palette
-  var res = sumstat.map(function(d){ return d.key }) // list of group names
-  var color = d3.scaleOrdinal()
-    .domain(res)
-    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
-
-  // Draw the line
-  svg.selectAll(".line")
-      .data(sumstat)
-      .enter()
-      .append("path")
-        .attr("fill", "none")
-        .attr("stroke", function(d){ return color(d.key) })
-        .attr("stroke-width", 1.5)
-        .attr("d", function(d){
-          return d3.line()
-            .x(function(d) { return x(d.year); })
-            .y(function(d) { return y(+d.n); })
-            (d.values)
-        })
-
-})
-
-</script>
-<h3>Begin the <a href="index.html">Journey</a> again</h3><br/>
-</body>
+      var y = d3.scaleLinear()
+        .range([height, 0]);
+      svg.append("g")
+        .call(d3.axisLeft(y));
+      var color = d3.scaleOrdinal()
+        .domain(["setosa", "versicolor", "virginica"])
+        .range(["#440154ff", "#21908dff", "#fde725ff"]);
+      
+      svg.append("g")
+        .selectAll("dot")
+        .data(data)
+        .enter()
+        .append("circle")
+          .attr("cx", function(d){return x(d.flipper_length_mm);})
+          .attr("cy", function(d){return y(d.body_mass_g);})
+          .attr("r", 5)
+          .style("fill", function(d){return color(d.species);});
+    });
+  </script>
