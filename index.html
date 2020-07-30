@@ -14,12 +14,12 @@
 </head>
 <body>
   <div id="container">
-    <h1>Dynamic Annotations in a Visualization Stepper</h1>
+    <h1>Flipper Length vs Body Mass of different penguins in Palmer station</h1>
     <h2 class="subtitle">Example of using jQuery to switch between annotations for different steps of a visualization</h2>
     <div id="vis-nav">
-      <a href="#" id="step1" class="step-link active">Step1</a>
-      <a href="#" id="step2" class="step-link">Step2</a>
-      <a href="#" id="step3" class="step-link">Step3</a>
+      <a href="#" id="step1" class="step-link active">Scene 1</a>
+      <a href="#" id="step2" class="step-link">Scene 2</a>
+      <a href="#" id="step3" class="step-link">Scene 3</a>
     </div>
     <div id="vis-container">
       <div id="annotation-steps">
@@ -52,6 +52,7 @@
         </div>
       </div>
       <div id="vis-canvas">
+      
       <style>
         .axis path,
         .axis line {
@@ -64,12 +65,12 @@
           stroke: #000;
         }
       </style>
-          <script>
+      <script>
             var margin = {top: 50, right: 20, bottom: 50, left:80},
             width = 940 - margin.left - margin.right, 
             height = 500 - margin.top - margin.bottom;
     
-            var svg = d3.select("#my_dataviz")
+            var svg = d3.select("#vis-canvas")
               .append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
