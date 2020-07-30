@@ -79,7 +79,7 @@
                 .style("fill", color(selected_specie))
                 .attr("r", 7);
           })
-            .on("mouseout", function(){
+            .on("mouseleave", function(d){
               d3.selectAll(".dot")
                 .transition()
                 .duration(200)
