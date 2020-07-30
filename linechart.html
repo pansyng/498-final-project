@@ -50,16 +50,18 @@
             .range(["#440154ff", "#21908dff", "#fde725ff"]);
           
           var highlight = function(d){
-              selected_species = d.species;
+              selected_specie = d.species;
+              
               d3.selectAll(".dot")
                 .transition()
                 .duration(200)
                 .style("fill", "lightgrey")
                 .attr("r", 3);
-              d3.selectAll("." + selected_species)
+                
+              d3.selectAll("." + selected_specie)
                 .transition()
                 .duration(200)
-                .style("fill", color(selected_species))
+                .style("fill", color(selected_specie))
                 .attr("r", 7);
           }
           var doNotHighlight = function(){
@@ -77,8 +79,8 @@
               .attr("cx", function(d){return x(d.flipper_length_mm);})
               .attr("cy", function(d){return y(d.body_mass_g);})
               .attr("r", 5)
-              .style("fill", function(d){return color(d.species);})
+              .style("fill", function(d) { return color(d.species); })
             .on("mouseover", highlight)
-            .on("mouseleave", doNotHighlight);
+            .on("mouseleave", doNotHighlight)
         });
       </script>
