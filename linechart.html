@@ -18,7 +18,7 @@
           .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         
-        d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/palmerpenguins.csv",function(data){
+        d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/palmerpenguins_cleaned.csv",function(data){
           
           var x = d3.scaleLinear()
             .domain([170, 240])
@@ -29,7 +29,7 @@
             .call(d3.axisBottom(x));
           //text label for the x axis 
           svg.append("text")
-            .attr("transform", "translate(" + (width/2) + "," + (height + margin.top - 20) + ")")
+            .attr("transform", "translate(" + (width/2) + "," + (height + margin.top - 15) + ")")
             .style("text-anchor", "middle")
             .text("flipper length (mm)");
 
@@ -90,5 +90,14 @@
               .style("fill", function(d) { return color(d.species); })
             .on("mouseover", highlight)
             .on("mouseleave", doNotHighlight)
+
+            //Add legend
+            svg.append("text").attr("x", 730).attr("y", 320).text("Penguin Species").style("font-size", "16px").attr("alignment-baseline","middle")
+            svg.append("circle").attr("cx",750).attr("cy",340).attr("r", 6).style("fill", "#440154ff")
+            svg.append("circle").attr("cx",750).attr("cy",360).attr("r", 6).style("fill", "#fde725ff")
+            svg.append("circle").attr("cx",750).attr("cy",380).attr("r", 6).style("fill", "#21908dff")
+            svg.append("text").attr("x", 770).attr("y", 340).text("Adeline").style("font-size", "15px").attr("alignment-baseline","middle")
+            svg.append("text").attr("x", 770).attr("y", 360).text("Chinstrap").style("font-size", "15px").attr("alignment-baseline","middle")
+            svg.append("text").attr("x", 770).attr("y", 380).text("Gentoo").style("font-size", "15px").attr("alignment-baseline","middle")
         })
       </script>
