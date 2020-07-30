@@ -27,20 +27,44 @@
           svg.append("g")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x));
+          //text label for the x axis 
+          svg.append("text")
+            .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top) + ")")
+            .style("text-anchor", "middle")
+            .text("flipper length (mm)");
+
           //Add the y axis 
           var y = d3.scaleLinear()
             .domain([2600, 6500])
             .range([height, 0]);
           svg.append("g")
             .call(d3.axisLeft(y));
+
+        //text label for the y axis
+          svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - margin.left)
+            .attr("x", 0 - (height / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text("body mass (g)");
+
           
           //Add color
           var color = d3.scaleOrdinal()
             .domain(["setosa", "versicolor", "virginica"])
             .range(["#440154ff", "#21908dff", "#fde725ff"]);
           
-          //Highlight the specie that is hovered
-          var highlight = function(d){
+          svg.append("g")
+            .selectAll("dot")
+            .data(data)
+            .enter()
+            .append("circle")
+              .attr("cx", function(d){return x(d.flipper_length_mm);})
+              .attr("cy", function(d){return y(d.body_mass_g);})
+              .attr("r", 5)
+              .style("fill", function(d) { return color(d.species); })
+            .on("mouseover", function(d){
               selected_specie = d.species;
               
               d3.selectAll(".dot")
@@ -54,24 +78,13 @@
                 .duration(200)
                 .style("fill", color(selected_specie))
                 .attr("r", 7);
-          }
-          var doNotHighlight = function(){
+          })
+            .on("mouseout", function(){
               d3.selectAll(".dot")
                 .transition()
                 .duration(200)
                 .style("fill", "lightgrey")
                 .attr("r", 5)
-          }
-          svg.append("g")
-            .selectAll("dot")
-            .data(data)
-            .enter()
-            .append("circle")
-              .attr("cx", function(d){return x(d.flipper_length_mm);})
-              .attr("cy", function(d){return y(d.body_mass_g);})
-              .attr("r", 5)
-              .style("fill", function(d) { return color(d.species); })
-            .on("mouseover", highlight)
-            .on("mouseout", doNotHighlight)
+          })
         });
       </script>
