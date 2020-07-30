@@ -18,7 +18,7 @@
           .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         
-        d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/palmerpenguins.csv", function(data){
+        d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/palmerpenguins_cleaned.csv", function(data){
           
           var x = d3.scaleLinear()
             .domain([170, 240])
