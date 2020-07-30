@@ -86,7 +86,7 @@
               .attr("cy", function(d){return y(d.body_mass_g);})
               .attr("r", 5)
               .style("fill", function(d) { return color(d.species); })
-            .on("mouseover", hightlight)
+            .on("mouseover", highlight)
             .on("mouseleave", doNotHighlight)
         })
       </script>
