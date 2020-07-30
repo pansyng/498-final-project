@@ -64,8 +64,16 @@
           stroke: #000;
         }
       </style>
-      <script>
-        var margin = {top: 50, right: 20, bottom: 30, left:80},
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v5.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+    <script>
+        var margin = {top: 50, right: 20, bottom: 50, left:80},
         width = 940 - margin.left - margin.right, 
         height = 500 - margin.top - margin.bottom;
 
@@ -77,20 +85,64 @@
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         
         d3.csv("https://raw.githubusercontent.com/pansyng/498-final-project/master/data/palmerpenguins.csv").then(function(data){
+          
           var x = d3.scaleLinear()
+            .domain([170, 240])
             .range([0, width]);
+          //Add the x axis 
           svg.append("g")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x));
+          //text label for the x axis 
+          svg.append("text")
+            .attr("transform", "translate(" + (width/2) + "," + (height + margin.top - 20) + ")")
+            .style("text-anchor", "middle")
+            .text("flipper length (mm)");
 
+          //Add the y axis 
           var y = d3.scaleLinear()
+            .domain([2600, 6500])
             .range([height, 0]);
           svg.append("g")
             .call(d3.axisLeft(y));
+
+        //text label for the y axis
+          svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 20 - margin.left)
+            .attr("x", 0 - (height / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text("body mass (g)");
+
+          
+          //Add color
           var color = d3.scaleOrdinal()
             .domain(["setosa", "versicolor", "virginica"])
             .range(["#440154ff", "#21908dff", "#fde725ff"]);
           
+          var highlight = function(d){
+            selected_specie = d.species
+            d3.selectAll(".dot")
+                .transition()
+                .duration(200)
+                .style("fill", "lightgrey")
+                .attr("r", 3)
+            d3.selectAll("." + selected_specie)
+                .transition()
+                .duration(200)
+                .style("fill", color(selected_specie))
+                .attr("r", 7)
+          }
+
+          var doNotHighlight = function(){
+            d3.selectAll(".dot")
+                .transition()
+                .duration(200)
+                .style("fill", "lightgrey")
+                .attr("r", 5)
+          }
+          //Add dot 
           svg.append("g")
             .selectAll("dot")
             .data(data)
@@ -99,8 +151,10 @@
               .attr("cx", function(d){return x(d.flipper_length_mm);})
               .attr("cy", function(d){return y(d.body_mass_g);})
               .attr("r", 5)
-              .style("fill", function(d){return color(d.species);});
-        });
+              .style("fill", function(d) { return color(d.species); })
+            .on("mouseover", hightlight)
+            .on("mouseleave", doNotHighlight)
+        })
       </script>
       </div>
     </div>
