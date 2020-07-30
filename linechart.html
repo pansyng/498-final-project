@@ -81,6 +81,6 @@
               .attr("r", 5)
               .style("fill", function(d) { return color(d.species); })
             .on("mouseover", highlight)
-            .on("mouseleave", doNotHighlight)
+            .on("mouseout", doNotHighlight)
         });
       </script>
