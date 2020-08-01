@@ -1,6 +1,6 @@
 /* This is just to make things look a bit better */
 body {
-    font:15px sans-serif;
+    font:20px sans-serif;
   }
   
   h2.subtitle {
@@ -74,14 +74,14 @@ body {
   
   #step1-left-annotation {
     left: 150px;
-    top: 130px;
+    top: 120px;
     width: 140px;
   }
    
   
   #step2-center-annotation {
     left: 200px;
-    top: 30px;
+    top: 25px;
     width: 140px;
   }
   
