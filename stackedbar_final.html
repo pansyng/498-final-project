@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-
+<head>
+    <title>
+        CS 498 Data Visualization Final Project - Pui Sze Pansy Ng
+    </title>
+</head>
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v4.js"></script>
 
@@ -9,12 +13,17 @@
   .container1{
     float: left;
   }
-  .container2{
-    float: right;
-  }
 </style>
+<div class="jumbotron" style="background-color: rgb(75, 131, 177); color: white" aligncenter>
+    <h1 style="padding-left : 2%">Relationship between each body part of penguins</h1>
+
+    <button class="btn"><i class="fa fa-home"></i> Home</button>
+</div>
 <div class="container1" id="chart1"></div>
-<div class="container2" id="chart2"></div>
+
+
+
+
 
 <script>
 
@@ -125,7 +134,7 @@
         .on("mouseleave", mouseleave)
   
   })
-  var svg = d3.select("#chart2")
+  var svg = d3.select("#chart1")
     .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -174,7 +183,7 @@
     // ----------------
     // Create a tooltip
     // ----------------
-    var tooltip = d3.select("#chart2")
+    var tooltip = d3.select("#chart1")
       .append("div")
       .style("opacity", 0)
       .attr("class", "tooltip")
@@ -229,4 +238,8 @@
 
 
   </script>
-  
+  <div class="article-header" aligncenter>
+    <p style="padding-left : 2%">For this data, they have investigated 342 penguins. For gender, there are 168 male penguins, 165 female penguins, and 9 of those are unknown. For island, there are 167 penguins from Biscoe island, 124 penguins from Dream, and 51 of those are from Torgersen island. </p>
+    <br/><h3>Please click <a href="index.html">here</a> back to homepage or <a href="scatterplot_final.html">here</a> back to the scatterplot!</h3><br/></div>
+    
+  </div>
