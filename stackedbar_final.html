@@ -16,8 +16,6 @@
 </style>
 <div class="jumbotron" style="background-color: rgb(75, 131, 177); color: white" aligncenter>
     <h1 style="padding-left : 2%">Relationship between each body part of penguins</h1>
-
-   
 </div>
 <div class="container1" id="chart1"></div>
 
@@ -65,6 +63,14 @@
       .range([ height, 0 ]);
     svg1.append("g")
       .call(d3.axisLeft(y));
+    //Add title 
+    svg1.append("text")
+      .attr("x", (width/2))
+      .attr("y", 10-(margin.top / 2))
+      .attr("text-anchor", "middle")
+      .style("font-size", "16px")
+      .style("text-decoration", "underline")
+      .text("Gender of penguins");
   
     // color palette = one color per subgroup
     var color = d3.scaleOrdinal()
@@ -166,6 +172,14 @@
       .range([ height, 0 ]);
     svg.append("g")
       .call(d3.axisLeft(y));
+    //Add title 
+    svg.append("text")
+      .attr("x", (width/2))
+      .attr("y", 10-(margin.top / 2))
+      .attr("text-anchor", "middle")
+      .style("font-size", "16px")
+      .style("text-decoration", "underline")
+      .text("Islands of penguins");
   
     // color palette = one color per subgroup
     var color = d3.scaleOrdinal()
